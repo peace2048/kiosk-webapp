@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>web app</title>
+        <style type="text/css">
+            html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0px;
+                padding: 0px;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <webview id="foo" src="https://www.ailes.co.jp/" style="display: inline-flex; width: 100%; height: 100%"></webview>
+        <div id="loading" style="position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: white">
+            <p id="message">Loading...</p>
+        </div>
+        <script>
+            var wv = document.getElementById('foo');
+            var ld = document.getElementById('loading');
+            var msg = document.getElementById('message');
+            var fail = false;
+            wv.addEventListener('did-fail-load', function(event) {
+                fail = true;
+                console.log('fail '+event);
+                ld.style.display = 'block';
+                msg.innerText = "fail";
+                setTimeout(function() {
+                    msg.innerText = "reload";
+                    wv.loadURL('https://www.ailes.co.jp/');
+                }, 3000);
+            });
+            wv.addEventListener('did-stop-loading', function() {
+                if (!fail)
+                {
+                    console.log('stop');
+                    ld.style.display = 'none';
+                }
+                fail = false;
+            });
+            wv.addEventListener('did-start-loading', function() {
+                console.log('start');
+                if (fail) {
+                    msg.innerText = "load";
+                    ld.style.display = 'block';
+                }
+            });
+        </script>
+    </body>
+</html>
